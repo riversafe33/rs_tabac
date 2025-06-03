@@ -45,9 +45,9 @@ Config.Text = {
     Empty2      = "That was the last dose!",
     Text10      = "Now you have 1 cigar left",
     Text11      = "Now you have 2 cigars left",
-    Text12      = "Now you have 4 cigars left",
-    Text13      = "Now you have 5 cigars left",
-    Text14      = "Now you have 6 cigars left",
+    Text12      = "Now you have 3 cigars left",
+    Text13      = "Now you have 4 cigars left",
+    Text14      = "Now you have 5 cigars left",
     NeedPipe    = 'You need a pipe and a lighter',
 }
 
