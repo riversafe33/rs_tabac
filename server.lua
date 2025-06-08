@@ -14,12 +14,10 @@ VorpInv.RegisterUsableItem(Config.Opium, function(data)
     local itemNeededCount = VorpInv.getItemCount(data.source, Config.ItemNeed)
     
     if itemCount >= 1 and itemNeededCount >= 1 then
-        -- Si tiene ambos ítems, restamos 1 de cada uno
         VorpInv.subItem(data.source, Config.ItemNeed, 0)
-        VorpInv.subItem(data.source, Config.Opium, 1) -- Resta 1 del Opium
+        VorpInv.subItem(data.source, Config.Opium, 1)
         TriggerClientEvent('rs_tabac:Opium', data.source)
     else
-        -- Si falta alguno de los ítems
         VORPcore.NotifyRightTip(data.source, Config.Text.NeedPipe, 4000)
     end
 
@@ -34,10 +32,6 @@ VorpInv.RegisterUsableItem(Config.Mushroom, function(data)
     TriggerClientEvent('rs_tabac:Mushroom', data.source)
 end)
 
-
------------------------ fin drogas duras --------------------------------
-
--- Ítems de porros y packs
 local JointPacks = {
     ["jointpack5"] = {
         type = "joint", pack = true,
@@ -77,30 +71,24 @@ Citizen.CreateThread(function()
         VorpInv.RegisterUsableItem(itemName, function(data)
             local src = data.source
 
-            -- Verificar si tiene el ítem necesario (ej: cerillas, mechero)
             local count = VorpInv.getItemCount(src, Config.ItemNeed)
             if count >= 1 then
-                -- Quitar un encendedor (o cerilla)
+
                 VorpInv.subItem(src, Config.ItemNeed, 0)
 
-                -- Iniciar animación y efectos
                 TriggerClientEvent('rs_tabac:doit', src, itemData.type, itemData.high, itemData.hightype, itemData.highduration)
 
-                -- Eliminar porro actual
                 VorpInv.subItem(src, itemName, 1)
 
-                -- Dar siguiente si es pack
                 if itemData.pack and itemData.next then
                     VorpInv.addItem(src, itemData.next, 1)
                 end
 
-                -- Mensaje de feedback
                 TriggerClientEvent("vorp:TipRight", src, itemData.message, 4000)
             else
                 TriggerClientEvent("vorp:TipRight", src, Config.Text.Lighter, 4000)
             end
 
-            -- Cerrar inventario siempre
             VorpInv.CloseInv(src)
         end)
     end
@@ -117,6 +105,44 @@ VorpInv.RegisterUsableItem("pipe", function(data)
 		TriggerClientEvent("vorp:TipRight", data.source, Config.Text.Pipe, 3000)
 	end
 	VorpInv.CloseInv(data.source)
+end)
+
+VorpInv.RegisterUsableItem("pipe_indien", function(data)
+    count = VorpInv.getItemCount(data.source, Config.ItemNeed4)
+    count2 = VorpInv.getItemCount(data.source, Config.ItemNeed3)
+    
+    if count >= 1 and count2 >= 1 then
+        local item = VorpInv.getItem(data.source, Config.ItemNeed4)
+        if item ~= nil then
+            local meta = item["metadata"]
+            if next(meta) == nil then 
+                VorpInv.subItem(data.source, Config.ItemNeed4, 1, {})
+                local drb = Config.MatchesDurability - 1
+                VorpInv.addItem(data.source, Config.ItemNeed4, 1, {
+                    description = Config.Text.Durability .. drb,
+                    durability = drb
+                })
+            else
+                local durability = meta.durability - 1
+                VorpInv.subItem(data.source, Config.ItemNeed4, 1, meta)
+                if durability <= 0 then 
+                    TriggerClientEvent("vorp:TipRight", data.source, Config.Text.Broken, 3000)
+                else
+                    VorpInv.addItem(data.source, Config.ItemNeed4, 1, {
+                        description = Config.Text.Durability .. durability,
+                        durability = durability
+                    })
+                end
+            end
+        end
+
+        VorpInv.subItem(data.source, Config.ItemNeed3, 1)
+        TriggerClientEvent('rs_tabac:pipe_indien', data.source)
+    else
+        TriggerClientEvent("vorp:TipRight", data.source, Config.Text.PipeIndien, 3000)
+    end
+    
+    VorpInv.CloseInv(data.source)
 end)
 
 VorpInv.RegisterUsableItem("cigar", function(data)
@@ -366,7 +392,6 @@ VorpInv.RegisterUsableItem("cigpack1", function(data)
 	end
 	VorpInv.CloseInv(data.source)
 end)
-
 
 VorpInv.RegisterUsableItem("chewingtobacco", function(data)
 	VorpInv.subItem(data.source, "chewingtobacco", 1)
