@@ -448,6 +448,92 @@ AddEventHandler('rs_tabac:cigar', function()
 end)
 
 
+RegisterNetEvent('rs_tabac:pipe_indien')
+AddEventHandler('rs_tabac:pipe_indien', function()
+    FPrompt(Config.Drop, Config.Prompts.DropKey, false)
+    LMPrompt(Config.Smoke, Config.Prompts.SmokeKey, false)
+    EPrompt(Config.Change, Config.Prompts.ChangeKey, false)
+    ExecuteCommand('close')
+    local ped = PlayerPedId()
+    local male = IsPedMale(ped)
+    local x, y, z = table.unpack(GetEntityCoords(ped, true))
+    local pipe= CreateObject(GetHashKey('p_peacepipe01x'), x, y, z, true, true, true)
+    local righthand = GetEntityBoneIndexByName(ped, "SKEL_R_Finger13")
+    AttachEntityToEntity(pipe, ped, righthand, -0.09, -0.01999999999999, 0.18, -175.0, 17.0, -15.0, true, true, false, true, 1, true)
+    Anim(ped,"amb_wander@code_human_smoking_wander@male_b@trans","nopipe_trans_pipe",-1,30)
+    Wait(9000)
+    Anim(ped,"amb_rest@world_human_smoking@male_b@base","base",-1,31)
+
+    while not IsEntityPlayingAnim(ped,"amb_rest@world_human_smoking@male_b@base","base", 3) do
+        Wait(100)
+    end
+
+
+    if proppromptdisplayed == false then
+        PromptSetEnabled(PropPrompt, true)
+        PromptSetVisible(PropPrompt, true)
+        PromptSetEnabled(UsePrompt, true)
+        PromptSetVisible(UsePrompt, true)
+        PromptSetEnabled(ChangeStance, true)
+        PromptSetVisible(ChangeStance, true)
+        proppromptdisplayed = true
+	end
+
+    while IsEntityPlayingAnim(ped, "amb_rest@world_human_smoking@male_b@base","base", 3) do
+
+        Wait(2)
+		if IsControlJustReleased(0, 0x3B24C470) then
+            PromptSetEnabled(PropPrompt, false)
+            PromptSetVisible(PropPrompt, false)
+            PromptSetEnabled(UsePrompt, false)
+            PromptSetVisible(UsePrompt, false)
+            PromptSetEnabled(ChangeStance, false)
+            PromptSetVisible(ChangeStance, false)
+            proppromptdisplayed = false
+
+            Anim(ped, "amb_wander@code_human_smoking_wander@male_b@trans", "pipe_trans_nopipe", -1, 30)
+            Wait(6066)
+            DeleteEntity(pipe)
+            ClearPedSecondaryTask(ped)
+            ClearPedTasks(ped)
+            Wait(10)
+		end
+        
+        if IsControlJustReleased(0, 0xD51B784F) then
+            Anim(ped, "amb_rest@world_human_smoking@pipe@proper@male_d@wip_base", "wip_base", -1, 30)
+            Wait(5000)
+            Anim(ped, "amb_rest@world_human_smoking@male_b@base","base", -1, 31)
+            Wait(100)
+        end
+
+        if IsControlJustReleased(0, 0x07B8BEAF) then
+            Anim(ped, "amb_rest@world_human_smoking@male_b@idle_a","idle_a", -1, 30, 0)
+            Wait(22600)
+            Anim(ped, "amb_rest@world_human_smoking@male_b@base","base", -1, 31, 0)
+            Wait(100)
+        end
+    end
+
+    PromptSetEnabled(PropPrompt, false)
+    PromptSetVisible(PropPrompt, false)
+    PromptSetEnabled(UsePrompt, false)
+    PromptSetVisible(UsePrompt, false)
+    PromptSetEnabled(ChangeStance, false)
+    PromptSetVisible(ChangeStance, false)
+    proppromptdisplayed = false
+
+    DetachEntity(pipe, true, true)
+    ClearPedSecondaryTask(ped)
+    RemoveAnimDict("amb_wander@code_human_smoking_wander@male_b@trans")
+    RemoveAnimDict("amb_rest@world_human_smoking@male_b@base")
+    RemoveAnimDict("amb_rest@world_human_smoking@pipe@proper@male_d@wip_base")
+    RemoveAnimDict("amb_rest@world_human_smoking@male_b@idle_a")
+    RemoveAnimDict("amb_rest@world_human_smoking@male_b@idle_b")
+    Wait(100)
+    ClearPedTasks(ped)
+    pipeon = false
+end)
+
 RegisterNetEvent('rs_tabac:pipe_smoker')
 AddEventHandler('rs_tabac:pipe_smoker', function()
     FPrompt(Config.Drop, Config.Prompts.DropKey, false)
@@ -576,6 +662,7 @@ AddEventHandler('rs_tabac:chewingtobacco', function()
         [8] = { ['dict'] = "amb_misc@world_human_chew_tobacco@male_b@idle_d",['anim'] = "idle_k" },
         [9] = { ['dict'] = "amb_misc@world_human_chew_tobacco@male_b@idle_d",['anim'] = "idle_l" }
     }
+
     local stance = "MaleA"
 
     RequestAnimDict("amb_misc@world_human_chew_tobacco@male_a@idle_a")
@@ -752,7 +839,6 @@ function Joint(high, hightype, highduration)
     local righthand = GetEntityBoneIndexByName(ped, "SKEL_R_Finger13")
     local mouth = GetEntityBoneIndexByName(ped, "skel_head")
 
-    -- Iniciar automáticamente el fumar
     if IsPedMale(ped) then
         AttachEntityToEntity(cigarette, ped, mouth, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, true, true, false, true, 1, true)
         Anim(ped, "amb_rest@world_human_smoking@male_c@stand_enter", "enter_back_rf", 9400, 0)
@@ -774,28 +860,24 @@ function Joint(high, hightype, highduration)
         Wait(2500)
     end
 
-    -- Activar los efectos del high y esperar toda la duración
     if high then
         AnimpostfxPlay(hightype)
-        Citizen.Wait(highduration * 1000)  -- Esperar toda la duración del efecto
+        Citizen.Wait(highduration * 1000) 
         AnimpostfxStop(hightype)
     end
 
-    -- Tirar el cigarro automáticamente justo cuando termina el efecto
     ClearPedSecondaryTask(ped)
     if IsPedMale(ped) then
         Anim(ped, "amb_rest@world_human_smoking@male_a@stand_exit", "exit_back", -1, 1)
     else 
         Anim(ped, "amb_rest@world_human_smoking@female_b@trans", "b_trans_fire_stand_a", -1, 1)
     end
-    Wait(3500)  -- Espera para que la animación de salida termine
+    Wait(3500)
 
-    -- Tirar el cigarro
     DetachEntity(cigarette, true, true)
     SetEntityVelocity(cigarette, 0.0, 0.0, -1.0)
     Wait(1500)
 
-    -- Limpiar tareas del ped después de tirar el cigarro
     ClearPedSecondaryTask(ped)
     ClearPedTasks(ped)
 end
@@ -821,14 +903,10 @@ end
 
 function HighEffect(hightype, highduration) 
     AnimpostfxPlay(hightype)
-    Citizen.Wait(highduration * 1000)  -- El efecto de high sigue durante toda la duración
+    Citizen.Wait(highduration * 1000) 
     AnimpostfxStop(hightype)
 end
 
-------------------------------------- drug -----------------------------------------------------
-
-
---########################### ANIM ###########################
 function Anim(actor, dict, body, duration, flags, introtiming, exittiming)
 	RequestAnimDict(dict)
 	local dur = duration or -1
@@ -843,7 +921,6 @@ function Anim(actor, dict, body, duration, flags, introtiming, exittiming)
 	TaskPlayAnim(actor, dict, body, intro, exit, dur, flag, 1, false, false, false, 0, true)
 end
 
---########################### OPIUM ###########################
 RegisterNetEvent('rs_tabac:Opium')
 AddEventHandler('rs_tabac:Opium', function()
 	local pipe = CreateObject(GetHashKey('P_PIPE01X'), GetEntityCoords(PlayerPedId()), true, true, true)
@@ -858,21 +935,20 @@ AddEventHandler('rs_tabac:Opium', function()
 
 	AnimpostfxPlay('PlayerWakeUpDrunk')
 	AnimpostfxPlay('playerdrugshalluc01')
-	Citizen.InvokeNative(0x406CCF555B04FAD3, PlayerPedId(), true, 1.0) -- SetPedDrunkness
+	Citizen.InvokeNative(0x406CCF555B04FAD3, PlayerPedId(), true, 1.0)
 
-	Citizen.InvokeNative(0xC6258F41D86676E0, PlayerPedId(), 0, 100)	-- SetAttributeCoreValue
-	Citizen.InvokeNative(0x4AF5A4C7B9157D14, PlayerPedId(), 0, 1000.0, true)	-- EnableAttributeCoreOverpower
+	Citizen.InvokeNative(0xC6258F41D86676E0, PlayerPedId(), 0, 100)
+	Citizen.InvokeNative(0x4AF5A4C7B9157D14, PlayerPedId(), 0, 1000.0, true)
 
 	Wait(Config.OpiumEffect)
 
 	AnimpostfxPlay('PlayerWakeUpDrunk')
 	AnimpostfxStop('playerdrugshalluc01')
-	Citizen.InvokeNative(0x406CCF555B04FAD3, PlayerPedId(), false, 0.0) -- SetPedDrunkness
+	Citizen.InvokeNative(0x406CCF555B04FAD3, PlayerPedId(), false, 0.0)
 end)
 
-
---########################### MUSHROOM ###########################
 local cam, mushroom
+
 local SkyEffects = {
 	"skytl_0000_01clear",
 	"skytl_0000_03clouds",
@@ -934,15 +1010,15 @@ AddEventHandler('rs_tabac:Mushroom', function()
 	
 	DeleteEntity(mushroom)
 	ClearPedTasks(PlayerPedId())
-	Citizen.InvokeNative(0x406CCF555B04FAD3, PlayerPedId(), true, 1.0)	-- SetPedDrunkness
+	Citizen.InvokeNative(0x406CCF555B04FAD3, PlayerPedId(), true, 1.0)
 	AnimpostfxPlay('PlayerRPGCore')
 	Wait(10000)
 
-	Citizen.InvokeNative(0x449995EA846D3FC2, -90.0)	-- SetGameplayCamInitialPitch
+	Citizen.InvokeNative(0x449995EA846D3FC2, -90.0)
 	Anim(PlayerPedId(), "veh_train@trolly@exterior@rl@exit@to@land@normal@get_out_start@male","dead_fall_out", -1, 2)
 	Wait(10000)
 
-	Citizen.InvokeNative(0x449995EA846D3FC2, -90.0)	-- SetGameplayCamInitialPitch
+	Citizen.InvokeNative(0x449995EA846D3FC2, -90.0)
 	Wait(500)
 	local pcoords = GetEntityCoords(PlayerPedId())
 	local coords = vector3(pcoords.x, pcoords.y, pcoords.z + 100)
@@ -977,17 +1053,15 @@ AddEventHandler('rs_tabac:Mushroom', function()
 	Wait(5000)
 
 	AnimpostfxPlay('PlayerWakeUpInterrogation')
-	Citizen.InvokeNative(0x406CCF555B04FAD3, PlayerPedId(), false, 0.0)	-- SetPedDrunkness
+	Citizen.InvokeNative(0x406CCF555B04FAD3, PlayerPedId(), false, 0.0)
 	AnimpostfxStop('PlayerRPGCore')
 end)
 
-
---########################### STOP RESOURCE ###########################
 AddEventHandler('onResourceStop', function (resourceName)
 	AnimpostfxStop('PlayerDrugsPoisonWell')
 	AnimpostfxStop('playerdrugshalluc01')
 
-	Citizen.InvokeNative(0x406CCF555B04FAD3, PlayerPedId(), false, 0.0)	-- SetPedDrunkness
+	Citizen.InvokeNative(0x406CCF555B04FAD3, PlayerPedId(), false, 0.0)
 
 	ClearPedTasks(PlayerPedId())
 
@@ -998,6 +1072,11 @@ AddEventHandler('onResourceStop', function (resourceName)
 	if DoesCamExist(cam) then
 		DestroyCam(cam, true)
 	end
+
+	for _, animpostfx in pairs(SkyEffects) do
+		AnimpostfxStop(animpostfx)
+	end
+end)
 
 	for _, animpostfx in pairs(SkyEffects) do
 		AnimpostfxStop(animpostfx)
