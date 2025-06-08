@@ -1,7 +1,10 @@
 Multi-Substance Smoking Script
 
-This script allows players to smoke a variety of substances in RedM, 
-including cigarettes, cigars, joints, pipe tobacco, and opium with pipe, as well as consume psychedelic mushrooms. 
+About
+This script allows players to smoke a variety of substances in RedM,
+Including:
+Cigar, Cigarette, Cigar Pack, Cigarette Pack, Joint, Joint Pack, Pipe, Pipe Tobacco, 
+Opium Pipe, Opium, Hallucinogenic Mushrooms, Peace Pipe, Peace Pipe Tobacco, Lighter, Matches and Chewing tobacco. 
 Each type features unique animations, visual effects, and informative messages. 
 All smoking actions require a lighter to use, adding realism and immersion. 
 The system also supports packs with multiple doses, displaying remaining quantities as players consume them.
