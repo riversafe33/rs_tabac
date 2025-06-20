@@ -8,7 +8,7 @@ Config.OpiumEffect = 60000
 Config.Mushroom = 'mushroom'
 Config.ItemNeed3 = "indien_tobacco"   -- Required for the peace pipe
 Config.ItemNeed4 = "matches"          -- Required to light the peace pipe
-Config.MatchesDurability = 20         -- Durability (number of uses) for the matches
+Config.MatchesDurability = 20         -- Durability (number of uses) for the matchbox
 
 Config.Prompts = { 
     Drop      = "Drop",                    
@@ -20,7 +20,7 @@ Config.Prompts = {
 }
 
 Config.Text = {
-    PipeIndien = "You need Indian tobacco and matches!",
+    PipeIndien = "You need Indian tobacco and matches",
     Broken      = "You used your last match",
     Durability  = "Durability = ",
     Joint4      = "You have 4 joints left",
