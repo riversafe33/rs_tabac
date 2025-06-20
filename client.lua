@@ -1077,8 +1077,3 @@ AddEventHandler('onResourceStop', function (resourceName)
 		AnimpostfxStop(animpostfx)
 	end
 end)
-
-	for _, animpostfx in pairs(SkyEffects) do
-		AnimpostfxStop(animpostfx)
-	end
-end)
