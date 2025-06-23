@@ -37,11 +37,3 @@ INSERT IGNORE INTO `items` (`item`, `label`, `limit`, `can_remove`, `type`, `usa
   ('indien_tobacco', 'Indian tobacco', 200, 1, 'item_standard', 1, '{}', 'Dried leaves traditionally used for smoking or medicinal purposes by Native American tribes.', 0.1),
   ('matches', 'Matches', 200, 1, 'item_standard', 1, '{}', 'Small sticks coated with a combustible substance for igniting fire.', 0.1),
   ('pipe_indien', 'Peace pipe', 200, 1, 'item_standard', 1, '{}', 'A ceremonial pipe used by Native American cultures for rituals and agreements.', 0.1);
-
--- New items added only for update
-INSERT IGNORE INTO `items` (`item`, `label`, `limit`, `can_remove`, `type`, `usable`, `metadata`, `desc`, `weight`) VALUES 
-  ('indien_tobacco', 'Indian Tobacco', 200, 1, 'item_standard', 1, '{}', 'Dried leaves traditionally used for smoking or medicinal purposes by Native American tribes.', 0.1),
-  ('matches', 'Matches', 200, 1, 'item_standard', 1, '{}', 'Small sticks coated with a combustible substance for igniting fire.', 0.1),
-  ('pipe_indien', 'Peace Pipe', 200, 1, 'item_standard', 1, '{}', 'A ceremonial pipe used by Native American cultures for rituals and agreements.', 0.1);
-
- 
