@@ -1,3 +1,5 @@
+# Remove -main the folder should be named just rs_tabac
+
 Multi-Substance Smoking Script
 
 About
